@@ -47,71 +47,30 @@
 
         .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
 
-        /* ADVANCED ANIMATION: GEN Z GUY ON E-BIKE */
-        .delivery-scene {
+        .hero-banner {
             width: 100%;
-            height: 250px;
-            position: relative;
-            overflow: hidden;
-            background: linear-gradient(to bottom, transparent 80%, var(--primary) 80%);
-            margin: 2rem 0;
+            height: 400px;
+            background: url('https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&q=80&w=1000') center/cover;
             border-radius: 32px;
-        }
-
-        .bike-wrapper {
-            position: absolute;
-            bottom: 20px;
-            right: -200px;
-            animation: moveLeft 10s linear infinite;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        @keyframes moveLeft {
-            0% { right: -200px; }
-            100% { right: 110%; }
-        }
-
-        .rider {
-            font-size: 5rem;
-            line-height: 1;
+            margin: 2rem 0;
             position: relative;
-            filter: drop-shadow(0 0 10px var(--primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
 
-        /* Character Details using Emoji Combo */
-        .rider::after {
-            content: '🧢'; /* Cap/Hair vibe */
+        .hero-banner::after {
+            content: '';
             position: absolute;
-            top: -10px;
-            left: 20px;
-            font-size: 2rem;
+            inset: 0;
+            background: linear-gradient(to top, var(--dark), transparent);
         }
 
-        .dreads {
-            position: absolute;
-            top: 5px;
-            left: 15px;
-            font-size: 1.2rem;
-            animation: hairMove 0.5s infinite alternate;
-        }
-
-        @keyframes hairMove {
-            0% { transform: rotate(-5deg); }
-            100% { transform: rotate(5deg); }
-        }
-
-        .caption {
-            position: absolute;
-            top: 20px;
-            width: 100%;
+        .hero-text-overlay {
+            position: relative;
+            z-index: 1;
             text-align: center;
-            font-weight: 800;
-            font-size: 0.8rem;
-            letter-spacing: 3px;
-            color: var(--primary);
-            text-transform: uppercase;
         }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
@@ -138,6 +97,8 @@
         .step { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
         .step-n { color: var(--primary); font-weight: 800; font-size: 1.5rem; opacity: 0.5; }
 
+        .highlight { color: var(--accent); font-weight: bold; }
+
         footer { padding: 4rem; text-align: center; opacity: 0.5; font-size: 0.8rem; }
     </style>
 </head>
@@ -148,24 +109,22 @@
     </header>
 
     <div class='container'>
-        <section class='delivery-scene glass'>
-            <div class='caption'>Eco-Squad Delivery Active</div>
-            <div class='bike-wrapper'>
-                <div class='dreads'>➰➰</div>
-                <div class='rider'>🚲💨</div>
-                <div style='margin-top: -15px; font-size: 2.5rem;'>💧</div>
+        <section class='hero-banner glass'>
+            <div class='hero-text-overlay'>
+                <h1 style='font-size: 3.5rem; font-weight: 800; margin: 0; background: linear-gradient(to right, white, #cbd5e1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;'>PREMIUM PURIFIED.</h1>
+                <p style='color: white; font-size: 1.2rem; margin-top: 0.5rem;'>7-Stage Reverse Osmosis Water</p>
             </div>
         </section>
 
-        <div style='text-align: center; margin: 4rem 0;'>
-            <h1 style='font-size: 3.5rem; font-weight: 800; margin: 0; background: linear-gradient(to right, white, #64748b); -webkit-background-clip: text; -webkit-text-fill-color: transparent;'>PREMIUM PURIFIED.</h1>
-            <p style='color: #64748b; font-size: 1.2rem;'>7-Stage Reverse Osmosis Technology.</p>
-            <div style='margin-top: 1rem; color: var(--primary); font-weight: 600;'>🚚 FREE: Lumumba • Mirema • Roysambu • Zimmerman • Co-op Base</div>
+        <div style='text-align: center; margin-bottom: 3rem;'>
+            <div style='color: var(--primary); font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px;'>
+                🚚 FREE DELIVERY: <span class='highlight'>Lumumba • Mirema • Roysambu • Zimmerman • Co-op • Base</span>
+            </div>
         </div>
 
         <div class='grid'>
             <div class='glass card-content'>
-                <span class='label'>Water Station Pricing</span>
+                <span class='label'>Refills (Bring Your Bottle)</span>
                 <table class='price-table'>
                     <tr><td>20L Refill</td><td>150/-</td></tr>
                     <tr><td>10L Refill</td><td>90/-</td></tr>
@@ -173,7 +132,7 @@
                     <tr><td>1L Refill</td><td>10/-</td></tr>
                 </table>
                 
-                <span class='label' style='margin-top: 2rem;'>Bottle + Water</span>
+                <span class='label' style='margin-top: 2rem;'>Bottle + Pure Water</span>
                 <table class='price-table'>
                     <tr><td>20L Premium (Heavy Duty)</td><td>1,300/-</td></tr>
                     <tr><td>20L Soft Bottle</td><td>500/-</td></tr>
@@ -186,7 +145,7 @@
                 <span class='label'>The Card Hack</span>
                 <div class='step'><div class='step-n'>01</div><div>Get your card at Papyrus Apartments.</div></div>
                 <div class='step'><div class='step-n'>02</div><div>Top up 1,000/- to Till 3291421.</div></div>
-                <div class='step'><div class='step-n'>03</div><div>Get 1,000/- credit + <span style='color: var(--accent)'>1 FREE 20L Refill</span>.</div></div>
+                <div class='step'><div class='step-n'>03</div><div>Get 1,000/- credit + <span class='highlight'>1 FREE 20L Refill</span>.</div></div>
                 <div class='step'><div class='step-n'>04</div><div>Tap to pay on delivery. No cash needed.</div></div>
                 
                 <div style='text-align: center;'>
@@ -194,11 +153,17 @@
                 </div>
             </div>
         </div>
+
+        <div class='glass card-content' style='margin-top: 2rem; text-align: center;'>
+            <span class='label'>Our Technology</span>
+            <h3 style='margin-top: 0; color: white;'>THE 7-STAGE DIFFERENCE</h3>
+            <p style='color: #94a3b8; max-width: 700px; margin: 0 auto;'>Removing 99% of impurities, bacteria, and microplastics. We add back the essential minerals your body needs for a crisp, natural taste.</p>
+        </div>
     </div>
 
     <footer>
         <p>REFILL • REUSE • REFRESH</p>
-        <p>Papyrus Apartments, Behind Co-op Bank, Zimmerman.</p>
+        <p>Papyrus Apartments, Behind Co-op Bank, Zimmerman. <br> Powered by Nexcom Ventures.</p>
     </footer>
 </body>
 </html>
