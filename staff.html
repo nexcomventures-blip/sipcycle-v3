@@ -4,8 +4,7 @@
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
     <title>Sip Cycle | Terminal</title>
-    <meta name='apple-mobile-web-app-capable' content='yes'>
-    <meta name='apple-mobile-web-app-status-bar-style' content='black-translucent'>
+    <script src='https://unpkg.com/html5-qrcode'></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         :root {
@@ -13,96 +12,192 @@
             --secondary: #4facfe;
             --dark: #070b14;
             --glass: rgba(255, 255, 255, 0.05);
+            --success: #10b981;
         }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--dark);
             color: white;
             margin: 0;
+            padding: 1rem;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             min-height: 100vh;
-            text-align: center;
         }
+        .header { width: 100%; display: flex; justify-content: space-between; margin-bottom: 2rem; opacity: 0.6; font-size: 0.8rem; letter-spacing: 2px; }
+        
         .terminal-card {
             background: rgba(255,255,255,0.03);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.1);
-            padding: 3rem 2rem;
-            border-radius: 40px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 0 50px rgba(0, 242, 254, 0.1);
-        }
-        .icon { font-size: 5rem; margin-bottom: 1.5rem; }
-        .status { font-weight: 800; font-size: 1.5rem; margin-top: 1rem; color: var(--primary); }
-        .btn {
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            border: none;
-            color: var(--dark);
-            padding: 1.2rem 2rem;
-            border-radius: 20px;
-            font-weight: 800;
-            font-size: 1.1rem;
-            margin-top: 2rem;
+            padding: 2rem;
+            border-radius: 32px;
             width: 100%;
-            cursor: pointer;
+            max-width: 400px;
+            text-align: center;
         }
-        .ios-hint {
-            margin-top: 2rem;
+
+        .mode-toggle {
+            display: flex;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 2rem;
+        }
+        .mode-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            color: white;
+            font-weight: 800;
+            cursor: pointer;
             font-size: 0.8rem;
-            color: #94a3b8;
-            padding: 1rem;
-            border: 1px dashed rgba(255,255,255,0.2);
-            border-radius: 15px;
+        }
+        .mode-btn.active { background: var(--primary); color: var(--dark); }
+
+        #reader { width: 100%; border-radius: 16px; overflow: hidden; margin-bottom: 1rem; border: none !important; }
+        
+        .status-box { margin-top: 1rem; padding: 1.5rem; border-radius: 20px; background: rgba(255,255,255,0.02); }
+        .price-badge { font-size: 2rem; font-weight: 800; color: var(--primary); margin: 0.5rem 0; }
+        
+        .input-group { text-align: left; margin-bottom: 1rem; }
+        .input-group label { font-size: 0.7rem; opacity: 0.5; text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .input-group input { 
+            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 8px; padding: 12px; color: white; font-family: inherit;
+        }
+
+        .btn-action {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border: none; color: var(--dark); padding: 1.2rem; border-radius: 16px;
+            font-weight: 800; width: 100%; margin-top: 1rem; cursor: pointer;
+        }
+
+        #success-ui {
+            position: fixed; inset: 0; background: var(--success); display: none;
+            flex-direction: column; align-items: center; justify-content: center; z-index: 1000;
         }
     </style>
 </head>
 <body>
+    <div id='success-ui'>
+        <div style='font-size: 5rem;'>✅</div>
+        <div style='font-size: 2rem; font-weight: 800;'>PAYMENT DONE</div>
+        <div id='success-details' style='margin-top: 10px; font-weight: 600;'>-150 KES (20L)</div>
+    </div>
+
+    <div class='header'>
+        <span>SIP CYCLE</span>
+        <span>v2.0 TERMINAL</span>
+    </div>
+
     <div class='terminal-card'>
-        <div style='font-size: 0.7rem; letter-spacing: 2px; opacity: 0.5; margin-bottom: 2rem;'>SIP CYCLE TERMINAL v1.1</div>
-        
-        <div id='ui-nfc'>
-            <div class='icon'>📡</div>
-            <div id='status' class='status'>Tap to Scan</div>
-            <button id='scanBtn' class='btn'>SCAN CLIENT CARD</button>
+        <div class='mode-toggle'>
+            <button id='btnPay' class='mode-btn active'>PAYMENT</button>
+            <button id='btnReg' class='mode-btn'>REGISTER CARD</button>
         </div>
 
-        <div class='ios-hint'>
-            <b>iPhone Tip:</b> Apple restricts NFC to native apps only. For iPhones, use your <b>Camera</b> to scan the Card QR code, or use an Android for the tap-to-pay experience.
+        <div id='reader'></div>
+
+        <div id='ui-pay'>
+            <div class='status-box'>
+                <div style='opacity: 0.6; font-size: 0.8rem;'>AUTO-DEDUCT MODE</div>
+                <div class='price-badge'>150/-</div>
+                <div style='font-size: 0.8rem;'>20 Litre Refill</div>
+            </div>
+            <button id='startScan' class='btn-action'>SCAN QR / TAP NFC</button>
+        </div>
+
+        <div id='ui-reg' style='display:none;'>
+            <div class='input-group'>
+                <label>Client Name</label>
+                <input type='text' id='regName' placeholder='e.g. Dickson'>
+            </div>
+            <div class='input-group'>
+                <label>Default Litres</label>
+                <input type='number' id='regLiters' value='20'>
+            </div>
+            <div class='input-group'>
+                <label>Card ID (Scan or Type)</label>
+                <input type='text' id='regCardId' readonly placeholder='Scan card to fill...'>
+            </div>
+            <button id='saveBtn' class='btn-action'>LINK CARD TO CLIENT</button>
         </div>
     </div>
 
     <script>
-        const scanBtn = document.getElementById('scanBtn');
-        const status = document.getElementById('status');
+        let currentMode = 'pay';
+        const html5QrCode = new Html5Qrcode('reader');
 
-        scanBtn.addEventListener('click', async () => {
-            if (!('NDEFReader' in window)) {
-                alert('NFC Scanning is only available on Chrome for Android. On iPhone, please scan the QR code on the card instead.');
-                return;
+        // Toggle Modes
+        document.getElementById('btnPay').onclick = () => {
+            currentMode = 'pay';
+            document.getElementById('btnPay').classList.add('active');
+            document.getElementById('btnReg').classList.remove('active');
+            document.getElementById('ui-pay').style.display = 'block';
+            document.getElementById('ui-reg').style.display = 'none';
+        };
+        document.getElementById('btnReg').onclick = () => {
+            currentMode = 'reg';
+            document.getElementById('btnReg').classList.add('active');
+            document.getElementById('btnPay').classList.remove('active');
+            document.getElementById('ui-reg').style.display = 'block';
+            document.getElementById('ui-pay').style.display = 'none';
+        };
+
+        // QR Logic
+        async function startCamera() {
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+            await html5QrCode.start({ facingMode: 'environment' }, config, (decodedText) => {
+                processId(decodedText);
+                html5QrCode.stop();
+            });
+        }
+
+        document.getElementById('startScan').onclick = startCamera;
+
+        // NFC Logic (Android only)
+        if ('NDEFReader' in window) {
+            const ndef = new NDEFReader();
+            ndef.scan().then(() => {
+                ndef.onreading = event => {
+                    processId(event.serialNumber);
+                };
+            });
+        }
+
+        function processId(id) {
+            if (currentMode === 'reg') {
+                document.getElementById('regCardId').value = id;
+                alert('Card ID Captured! Now click Link.');
+            } else {
+                // Payment Mode
+                document.getElementById('success-ui').style.display = 'flex';
+                // Mock Deduction
+                console.log('Deducting 150/- from card:', id);
+                
+                setTimeout(() => {
+                    document.getElementById('success-ui').style.display = 'none';
+                }, 2000);
             }
+        }
 
-            try {
-                const ndef = new NDEFReader();
-                await ndef.scan();
-                status.textContent = 'Hold Card Near Phone';
-                scanBtn.style.opacity = '0.5';
+        document.getElementById('saveBtn').onclick = () => {
+            const name = document.getElementById('regName').value;
+            const liters = document.getElementById('regLiters').value;
+            const id = document.getElementById('regCardId').value;
+            
+            if(!name || !id) return alert('Please scan a card and enter a name.');
+            
+            alert();
+            // Reset
+            document.getElementById('regName').value = '';
+            document.getElementById('regCardId').value = '';
+        };
 
-                ndef.addEventListener('reading', ({ serialNumber }) => {
-                    alert('PAYMENT VERIFIED! Card ID: ' + serialNumber);
-                    status.textContent = 'SUCCESS ✅';
-                    setTimeout(() => {
-                        status.textContent = 'Ready for Next Tap';
-                        scanBtn.style.opacity = '1';
-                    }, 2000);
-                });
-            } catch (error) {
-                alert('Scanning failed. Make sure NFC is enabled in your settings.');
-            }
-        });
     </script>
 </body>
 </html>
