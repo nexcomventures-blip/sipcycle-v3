@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Sip Cycle | Terminal</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --dark: #070b14;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--dark);
+            color: white;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            text-align: center;
+        }
+        .terminal-card {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 3rem 2rem;
+            border-radius: 40px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 0 50px rgba(0, 242, 254, 0.1);
+        }
+        .nfc-icon {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; text-shadow: 0 0 20px var(--primary); }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+        .status {
+            font-weight: 800;
+            font-size: 1.5rem;
+            margin-top: 1rem;
+            color: var(--primary);
+        }
+        .btn-scan {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border: none;
+            color: var(--dark);
+            padding: 1rem 2rem;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-top: 2rem;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0, 242, 254, 0.2);
+        }
+        .log {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            opacity: 0.5;
+            max-height: 100px;
+            overflow-y: auto;
+            width: 100%;
+        }
+        .success-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 242, 254, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            color: var(--dark);
+            font-size: 3rem;
+            font-weight: 800;
+        }
+    </style>
+</head>
+<body>
+    <div id='success' class='success-overlay'>PAYMENT VERIFIED! ✅</div>
+
+    <div class='terminal-card'>
+        <div style='font-size: 0.8rem; letter-spacing: 2px; opacity: 0.5; margin-bottom: 2rem;'>SIP CYCLE TERMINAL v1.0</div>
+        <div class='nfc-icon'>📡</div>
+        <div id='instruction'>READY TO SCAN</div>
+        <div id='status' class='status'>Tap Card to Pay</div>
+        
+        <button id='scanBtn' class='btn-scan'>START SCANNER</button>
+        
+        <div id='log' class='log'>Waiting for interaction...</div>
+    </div>
+
+    <script>
+        const scanBtn = document.getElementById('scanBtn');
+        const status = document.getElementById('status');
+        const log = document.getElementById('log');
+        const success = document.getElementById('success');
+
+        function addLog(msg) {
+            const entry = document.createElement('div');
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            log.prepend(entry);
+        }
+
+        scanBtn.addEventListener('click', async () => {
+            if (!('NDEFReader' in window)) {
+                alert('NFC is not supported on this device or browser. Please use Chrome on Android.');
+                return;
+            }
+
+            try {
+                const ndef = new NDEFReader();
+                await ndef.scan();
+                addLog('Scanner started successfully.');
+                status.textContent = 'Hold Card to Phone';
+                scanBtn.style.display = 'none';
+
+                ndef.addEventListener('readingerror', () => {
+                    addLog('Error reading tag. Try again.');
+                });
+
+                ndef.addEventListener('reading', ({ message, serialNumber }) => {
+                    addLog(`Read Card ID: ${serialNumber}`);
+                    
+                    // Show success UI
+                    success.style.display = 'flex';
+                    
+                    setTimeout(() => {
+                        success.style.display = 'none';
+                        status.textContent = 'Ready for Next Tap';
+                    }, 2000);
+                });
+
+            } catch (error) {
+                addLog('Error: ' + error);
+                alert('NFC permission denied or hardware unavailable.');
+            }
+        });
+    </script>
+</body>
+</html>
