@@ -54,62 +54,49 @@
         }
         .hero p { color: #94a3b8; font-size: 1.2rem; margin-top: 1rem; }
         .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
-        .image-banner {
+        
+        .bike-container {
             width: 100%;
-            height: 300px;
-            background: url('https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&q=80&w=1000') center/cover;
-            border-radius: 32px;
-            margin: 2rem 0;
-            position: relative;
-        }
-        .image-banner::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, var(--dark), transparent);
-            border-radius: 32px;
-        }
-        .delivery-banner {
-            width: 100%;
-            height: 400px;
-            background: url('https://images.unsplash.com/photo-1612460012114-f903747f444f?auto=format&fit=crop&q=80&w=1000') center/cover;
-            border-radius: 32px;
-            margin: 2rem 0;
-            display: flex;
-            align-items: flex-end;
-            padding: 2rem;
+            height: 200px;
             position: relative;
             overflow: hidden;
+            background: rgba(255,255,255,0.02);
+            border-radius: 24px;
+            margin: 2rem 0;
         }
-        .delivery-banner::before {
-            content: '';
+        .bike {
             position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(15, 23, 42, 0.9), transparent);
+            bottom: 20px;
+            left: -150px;
+            font-size: 4rem;
+            animation: drive 8s linear infinite;
         }
-        .delivery-text { position: relative; z-index: 1; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
-        .feature-card { padding: 2rem; text-align: left; }
-        .feature-card h3 { color: var(--primary); margin-top: 0; }
-        .price-card {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            padding: 2rem;
+        @keyframes drive {
+            0% { left: -150px; }
+            100% { left: 100%; }
+        }
+        .bike-text {
+            position: absolute;
+            top: 20px;
+            width: 100%;
             text-align: center;
-            border: 2px solid var(--primary);
+            font-weight: 800;
+            color: var(--primary);
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
-        .price-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 1rem 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            font-weight: 600;
-        }
-        .step-box {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            align-items: flex-start;
-        }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .feature-card { padding: 2rem; }
+        .feature-card h3 { color: var(--primary); margin-top: 0; display: flex; align-items: center; gap: 10px; }
+        
+        .price-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        .price-table td { padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-weight: 600; }
+        .price-table td:last-child { text-align: right; color: var(--primary); }
+        .cat-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #64748b; margin-top: 1.5rem; border-bottom: 1px solid var(--primary); display: inline-block; }
+
+        .step-box { display: flex; gap: 1rem; margin-bottom: 1.5rem; align-items: flex-start; }
         .step-num {
             background: var(--primary);
             color: var(--dark);
@@ -135,16 +122,8 @@
             margin-top: 2rem;
             box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
         }
-        .delivery-zones {
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            color: #94a3b8;
-        }
+        .delivery-zones { margin-top: 1rem; font-size: 0.9rem; color: #94a3b8; }
         footer { padding: 4rem 1.5rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); }
-        @media (max-width: 600px) {
-            .hero h1 { font-size: 2.5rem; }
-            .delivery-banner { height: 300px; }
-        }
     </style>
 </head>
 <body>
@@ -152,69 +131,81 @@
         <div style='font-size: 1.5rem; font-weight: 800;'>SIP CYCLE</div>
         <div style='color: var(--primary); font-weight: bold;'>TILL: 3291421</div>
     </header>
+
     <section class='hero'>
         <div class='container'>
-            <h1>STAY HYDRATED.<br>STAY PURE.</h1>
-            <p>Premium 7-Stage Reverse Osmosis Water. Delivered to your door.</p>
-            <div class='image-banner'></div>
-            <a href='https://www.google.com/maps/search/?api=1&query=Papyrus+Apartments+Zimmerman+Nairobi' class='btn-main'>FIND US IN ZIMMERMAN</a>
+            <h1>REFILL.<br>REUSE. REFRESH.</h1>
+            <p>The smartest way to get 7-Stage RO Purified Water.</p>
+            
+            <div class='bike-container glass'>
+                <div class='bike-text'>Fast Eco-Delivery Active</div>
+                <div class='bike'>🚲💨💧</div>
+            </div>
+
             <div class='delivery-zones'>
                 🚚 FREE DELIVERY: <span class='highlight'>Lumumba Dr • Mirema Dr • Roysambu • Zimmerman • Co-op Base</span>
             </div>
         </div>
     </section>
+
     <div class='container'>
-        <div class='glass feature-card' style='padding: 0; overflow: hidden;'>
-            <div class='delivery-banner'>
-                <div class='delivery-text'>
-                    <h2 style='margin: 0; color: var(--primary); font-size: 2rem;'>FAST & ECO-FRIENDLY</h2>
-                    <p style='margin: 0.5rem 0 0; color: white; font-weight: 600;'>Our Gen Z squad on electric bikes ensures your 20L gallon arrives in record time without the carbon footprint.</p>
+        <div class='grid'>
+            <div class='glass feature-card'>
+                <h3>💰 PRICE LIST</h3>
+                
+                <div class='cat-title'>Refills (Bring Your Bottle)</div>
+                <table class='price-table'>
+                    <tr><td>20L Refill</td><td>150/-</td></tr>
+                    <tr><td>10L Refill</td><td>90/-</td></tr>
+                    <tr><td>5L Refill</td><td>40/-</td></tr>
+                    <tr><td>1L Refill</td><td>10/-</td></tr>
+                </table>
+
+                <div class='cat-title'>Water + New Bottle</div>
+                <table class='price-table'>
+                    <tr><td>20L Premium Bottle</td><td>500/-</td></tr>
+                    <tr><td>20L Soft Bottle</td><td>300/-</td></tr>
+                    <tr><td>10L + Bottle</td><td>200/-</td></tr>
+                    <tr><td>5L + Bottle</td><td>150/-</td></tr>
+                    <tr><td>1L + Bottle</td><td>40/-</td></tr>
+                    <tr><td>0.5L + Bottle</td><td>20/-</td></tr>
+                </table>
+            </div>
+
+            <div class='glass feature-card'>
+                <h3>💳 THE CARD HACK</h3>
+                <p style='font-size: 0.9rem; opacity: 0.8;'>Skip the cash. Get the bonus.</p>
+                <div class='step-box'>
+                    <div class='step-num'>1</div>
+                    <div><b>Get Card:</b> Grab yours at Papyrus Apartments station.</div>
+                </div>
+                <div class='step-box'>
+                    <div class='step-num'>2</div>
+                    <div><b>Top Up:</b> Send <span class='highlight'>1,000/-</span> to Till <span class='highlight'>3291421</span>.</div>
+                </div>
+                <div class='step-box'>
+                    <div class='step-num'>3</div>
+                    <div><b>Free Refill:</b> Get 1,000/- credit <span class='highlight'>+ 1 FREE 20L Refill</span> reward.</div>
+                </div>
+                <div class='step-box' style='margin-bottom: 0;'>
+                    <div class='step-num'>4</div>
+                    <div><b>Tap:</b> Just tap to pay instantly on delivery.</div>
                 </div>
             </div>
         </div>
-        <div class='grid'>
-            <div class='glass feature-card'>
-                <h3>🔬 The RO Difference</h3>
-                <p>Not all water is equal. Our 7-Stage system goes beyond basic filters:</p>
-                <ul style='font-size: 0.9rem; color: #cbd5e1; padding-left: 1.2rem;'>
-                    <li><b>Stage 1-3:</b> Removes dust, sand, and 99% of chlorine/odors.</li>
-                    <li><b>Stage 4 (The RO Core):</b> A high-pressure membrane removes viruses, bacteria, and heavy metals.</li>
-                    <li><b>Stage 5-6:</b> Post-carbon polishing & Mineralization to restore essential minerals.</li>
-                    <li><b>Stage 7:</b> Final UV Sterilization for 100% safety.</li>
-                </ul>
-            </div>
-            <div class='glass feature-card price-card'>
-                <h3 style='color: white;'>VIBE CHECK: PRICING</h3>
-                <div class='price-item'><span>20L Refill</span><span>150/-</span></div>
-                <div class='price-item'><span>10L Refill</span><span>90/-</span></div>
-                <div class='price-item'><span>5L Refill</span><span>40/-</span></div>
-                <div class='price-item'><span>1L Refill</span><span>10/-</span></div>
-                <p style='margin-top: 1.5rem; font-size: 1.2rem; font-weight: 800;'>WHATSAPP: <br> <a href='tel:0719626363' style='color: var(--primary); text-decoration: none;'>0719 62 63 63</a></p>
-            </div>
-        </div>
+
         <div class='glass feature-card' style='margin-top: 2rem;'>
-            <h3 style='text-align: center; font-size: 1.8rem;'>💳 THE REFILL CARD HACK</h3>
-            <div class='step-box'>
-                <div class='step-num'>1</div>
-                <div><b>Grab Your Card:</b> Get your Sip Cycle smart card at our station in Papyrus Apartments.</div>
-            </div>
-            <div class='step-box'>
-                <div class='step-num'>2</div>
-                <div><b>Top Up:</b> Send <span class='highlight'>KES 1,000</span> to Till <span class='highlight'>3291421</span>.</div>
-            </div>
-            <div class='step-box'>
-                <div class='step-num'>3</div>
-                <div><b>Get the Bonus:</b> We credit your card with 1,000/- AND give you <span class='highlight'>1 FREE 20L Refill</span> reward.</div>
-            </div>
-            <div class='step-box'>
-                <div class='step-num'>4</div>
-                <div><b>Tap & Go:</b> Just tap your card next time. No cash needed.</div>
+            <h3>🔬 THE 7-STAGE RO SYSTEM</h3>
+            <p style='opacity: 0.8;'>We dont just filter; we purify. Our system removes 99% of contaminants including lead, mercury, bacteria, and viruses, then adds back healthy minerals for that crisp, clean taste.</p>
+            <div style='text-align: center;'>
+                <a href='tel:0719626363' class='btn-main'>ORDER: 0719 62 63 63</a>
             </div>
         </div>
     </div>
+
     <footer>
-        <p>REFILL • REUSE • REFRESH</p>
-        <p style='color: #475569; font-size: 0.8rem;'>Papyrus Apartments, Behind Co-op Bank, Zimmerman. <br> Powered by Nexcom Ventures.</p>
+        <p>SIP CYCLE x NEXCOM VENTURES</p>
+        <p style='color: #475569; font-size: 0.8rem;'>Papyrus Apartments, Behind Co-op Bank, Zimmerman.</p>
     </footer>
 </body>
 </html>
