@@ -1,0 +1,15 @@
+{
+  "name": "Sip Cycle Terminal",
+  "short_name": "SipTerminal",
+  "start_url": "staff.html",
+  "display": "standalone",
+  "background_color": "#070b14",
+  "theme_color": "#00f2fe",
+  "icons": [
+    {
+      "src": "https://img.icons8.com/fluency/144/water.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    }
+  ]
+}
