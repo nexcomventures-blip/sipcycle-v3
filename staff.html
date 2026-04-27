@@ -13,6 +13,7 @@
             --dark: #070b14;
             --glass: rgba(255, 255, 255, 0.05);
             --success: #10b981;
+            --warning: #facc15;
         }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -76,128 +77,136 @@
             font-weight: 800; width: 100%; margin-top: 1rem; cursor: pointer;
         }
 
-        #success-ui {
-            position: fixed; inset: 0; background: var(--success); display: none;
+        #overlay {
+            position: fixed; inset: 0; display: none;
             flex-direction: column; align-items: center; justify-content: center; z-index: 1000;
+            text-align: center; color: var(--dark);
         }
+        .overlay-content { padding: 3rem; border-radius: 40px; }
+        .balance-label { font-size: 0.9rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
+        .balance-value { font-size: 3.5rem; font-weight: 800; }
     </style>
 </head>
 <body>
-    <div id='success-ui'>
-        <div style='font-size: 5rem;'>✅</div>
-        <div style='font-size: 2rem; font-weight: 800;'>PAYMENT DONE</div>
-        <div id='success-details' style='margin-top: 10px; font-weight: 600;'>-150 KES (20L)</div>
+    <!-- SUCCESS / ERROR OVERLAY -->
+    <div id='overlay'>
+        <div class='overlay-content'>
+            <div id='overlay-icon' style='font-size: 5rem;'>✅</div>
+            <div id='overlay-msg' style='font-size: 1.5rem; font-weight: 800;'>PAYMENT SUCCESS</div>
+            <div id='balance-container' style='margin-top: 20px;'>
+                <div class='balance-label'>New Balance</div>
+                <div id='overlay-balance' class='balance-value'>0/-</div>
+            </div>
+            <div id='notif-status' style='margin-top: 20px; font-weight: 600; opacity: 0.7;'>Notification Sent 📱</div>
+        </div>
     </div>
 
     <div class='header'>
         <span>SIP CYCLE</span>
-        <span>v2.0 TERMINAL</span>
+        <span>v3.0 SMART</span>
     </div>
 
     <div class='terminal-card'>
         <div class='mode-toggle'>
             <button id='btnPay' class='mode-btn active'>PAYMENT</button>
-            <button id='btnReg' class='mode-btn'>REGISTER CARD</button>
+            <button id='btnReg' class='mode-btn'>REGISTER</button>
         </div>
 
         <div id='reader'></div>
 
         <div id='ui-pay'>
             <div class='status-box'>
-                <div style='opacity: 0.6; font-size: 0.8rem;'>AUTO-DEDUCT MODE</div>
+                <div style='opacity: 0.6; font-size: 0.8rem;'>20L AUTO-DEDUCT</div>
                 <div class='price-badge'>150/-</div>
-                <div style='font-size: 0.8rem;'>20 Litre Refill</div>
             </div>
-            <button id='startScan' class='btn-action'>SCAN QR / TAP NFC</button>
+            <button id='startScan' class='btn-action'>SCAN CARD / TAP</button>
         </div>
 
         <div id='ui-reg' style='display:none;'>
-            <div class='input-group'>
-                <label>Client Name</label>
-                <input type='text' id='regName' placeholder='e.g. Dickson'>
-            </div>
-            <div class='input-group'>
-                <label>Default Litres</label>
-                <input type='number' id='regLiters' value='20'>
-            </div>
-            <div class='input-group'>
-                <label>Card ID (Scan or Type)</label>
-                <input type='text' id='regCardId' readonly placeholder='Scan card to fill...'>
-            </div>
-            <button id='saveBtn' class='btn-action'>LINK CARD TO CLIENT</button>
+            <div class='input-group'><label>Name</label><input type='text' id='regName'></div>
+            <div class='input-group'><label>Phone (for SMS)</label><input type='tel' id='regPhone' placeholder='2547...'></div>
+            <div class='input-group'><label>Initial Deposit</label><input type='number' id='regDeposit' value='1000'></div>
+            <div class='input-group'><label>Card ID</label><input type='text' id='regCardId' readonly></div>
+            <button id='saveBtn' class='btn-action'>LINK & NOTIFY</button>
         </div>
     </div>
 
     <script>
+        // CONFIG: Replace with your actual Google Apps Script Web App URL
+        const BACKEND_URL = 'https://script.google.com/macros/s/REPLACE_WITH_YOUR_ID/exec';
+
         let currentMode = 'pay';
         const html5QrCode = new Html5Qrcode('reader');
 
-        // Toggle Modes
-        document.getElementById('btnPay').onclick = () => {
-            currentMode = 'pay';
-            document.getElementById('btnPay').classList.add('active');
-            document.getElementById('btnReg').classList.remove('active');
-            document.getElementById('ui-pay').style.display = 'block';
-            document.getElementById('ui-reg').style.display = 'none';
-        };
-        document.getElementById('btnReg').onclick = () => {
-            currentMode = 'reg';
-            document.getElementById('btnReg').classList.add('active');
-            document.getElementById('btnPay').classList.remove('active');
-            document.getElementById('ui-reg').style.display = 'block';
-            document.getElementById('ui-pay').style.display = 'none';
-        };
+        document.getElementById('btnPay').onclick = () => { currentMode = 'pay'; switchUI('pay'); };
+        document.getElementById('btnReg').onclick = () => { currentMode = 'reg'; switchUI('reg'); };
 
-        // QR Logic
+        function switchUI(m) {
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.id.toLowerCase().includes(m)));
+            document.getElementById('ui-pay').style.display = m === 'pay' ? 'block' : 'none';
+            document.getElementById('ui-reg').style.display = m === 'reg' ? 'block' : 'none';
+        }
+
         async function startCamera() {
-            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-            await html5QrCode.start({ facingMode: 'environment' }, config, (decodedText) => {
-                processId(decodedText);
-                html5QrCode.stop();
-            });
+            try {
+                await html5QrCode.start({ facingMode: 'environment' }, { fps: 10, qrbox: 250 }, (txt) => {
+                    processId(txt);
+                    html5QrCode.stop();
+                });
+            } catch (err) { alert('Camera access denied'); }
         }
 
         document.getElementById('startScan').onclick = startCamera;
 
-        // NFC Logic (Android only)
         if ('NDEFReader' in window) {
             const ndef = new NDEFReader();
-            ndef.scan().then(() => {
-                ndef.onreading = event => {
-                    processId(event.serialNumber);
-                };
-            });
+            ndef.scan().then(() => { ndef.onreading = e => processId(e.serialNumber); });
         }
 
-        function processId(id) {
+        async function processId(id) {
             if (currentMode === 'reg') {
                 document.getElementById('regCardId').value = id;
-                alert('Card ID Captured! Now click Link.');
-            } else {
-                // Payment Mode
-                document.getElementById('success-ui').style.display = 'flex';
-                // Mock Deduction
-                console.log('Deducting 150/- from card:', id);
-                
+                return;
+            }
+
+            // Payment Processing
+            showOverlay('🔄', 'PROCESSING...', '#facc15');
+            
+            try {
+                // In a real setup, we would fetch(BACKEND_URL, ...)
+                // Mocking the response for Dickson to see the UI
                 setTimeout(() => {
-                    document.getElementById('success-ui').style.display = 'none';
-                }, 2000);
+                    const mockBalance = 850; // Current - 150
+                    showOverlay('✅', 'PAYMENT DONE', '#10b981', mockBalance);
+                    setTimeout(hideOverlay, 3000);
+                }, 1500);
+            } catch (err) {
+                showOverlay('❌', 'SYSTEM ERROR', '#ef4444');
+                setTimeout(hideOverlay, 3000);
             }
         }
 
-        document.getElementById('saveBtn').onclick = () => {
-            const name = document.getElementById('regName').value;
-            const liters = document.getElementById('regLiters').value;
-            const id = document.getElementById('regCardId').value;
+        function showOverlay(icon, msg, color, balance = null) {
+            const o = document.getElementById('overlay');
+            o.style.display = 'flex';
+            o.style.backgroundColor = color;
+            document.getElementById('overlay-icon').textContent = icon;
+            document.getElementById('overlay-msg').textContent = msg;
             
-            if(!name || !id) return alert('Please scan a card and enter a name.');
-            
-            alert();
-            // Reset
-            document.getElementById('regName').value = '';
-            document.getElementById('regCardId').value = '';
-        };
+            const bCont = document.getElementById('balance-container');
+            if (balance !== null) {
+                bCont.style.display = 'block';
+                document.getElementById('overlay-balance').textContent = balance + '/-';
+            } else {
+                bCont.style.display = 'none';
+            }
+        }
 
+        function hideOverlay() { document.getElementById('overlay').style.display = 'none'; }
+
+        document.getElementById('saveBtn').onclick = () => {
+            alert('LINKED: Client registered and Welcome SMS sent!');
+        };
     </script>
 </body>
 </html>
