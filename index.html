@@ -3,82 +3,190 @@
 <head>
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>Sip Cycle | Premium Purified Water</title>
+    <title>Sip Cycle | The Future of Water</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        :root { --teal: #0d9488; --teal-dark: #0f766e; --teal-light: #f0fdfa; --gold: #ca8a04; }
-        body { font-family: 'Inter', sans-serif; margin: 0; color: #1f2937; background: #f9fafb; line-height: 1.6; }
-        .nav { background: white; padding: 1rem; text-align: center; border-bottom: 1px solid #e5e7eb; position: sticky; top: 0; z-index: 100; font-weight: bold; color: var(--teal); }
-        .hero { background: linear-gradient(135deg, var(--teal) 0%, #134e4a 100%); color: white; padding: 4rem 1.5rem; text-align: center; }
-        .hero h1 { font-size: 2.5rem; margin: 0; }
-        .hero p { font-size: 1.1rem; opacity: 0.9; margin: 1rem 0 0; }
-        .container { max-width: 600px; margin: 0 auto; padding: 0 1.5rem; }
-        .card { background: white; border-radius: 1.25rem; padding: 2rem; margin: -3rem auto 2rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        .badge { display: inline-block; background: #fef9c3; color: #854d0e; padding: 0.5rem 1rem; border-radius: 2rem; font-weight: bold; font-size: 0.875rem; margin-bottom: 1rem; border: 1px solid #fde047; }
-        .offer-card { background: #fffbeb; border: 2px dashed var(--gold); border-radius: 1rem; padding: 1.5rem; margin: 1.5rem 0; text-align: center; }
-        .offer-card h4 { color: var(--gold); margin: 0 0 0.5rem; font-size: 1.1rem; }
-        .pricing-grid { display: grid; gap: 0.75rem; margin: 1.5rem 0; }
-        .price-item { display: flex; justify-content: space-between; padding: 1rem; background: var(--teal-light); border-radius: 0.75rem; font-weight: 600; color: var(--teal-dark); }
-        .section-title { font-size: 1.25rem; font-weight: 700; margin: 2rem 0 1rem; color: #111827; }
-        .service-list { background: white; padding: 1.5rem; border-radius: 1rem; border: 1px solid #e5e7eb; }
-        .service-item { display: flex; align-items: center; margin-bottom: 0.75rem; font-size: 0.95rem; }
-        .service-item span { margin-right: 0.75rem; }
-        .btn { display: block; background: var(--teal); color: white; padding: 1rem; text-decoration: none; border-radius: 0.75rem; font-weight: bold; text-align: center; margin-top: 1.5rem; transition: 0.2s; }
-        .btn:hover { background: var(--teal-dark); }
-        .footer { padding: 3rem; text-align: center; font-size: 0.875rem; color: #6b7280; }
-        .ro-badge { background: #e0f2fe; color: #0369a1; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --accent: #facc15;
+            --dark: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+        }
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            margin: 0; 
+            background-color: var(--dark); 
+            color: white; 
+            overflow-x: hidden;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+        }
+        header {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        .hero {
+            padding: 6rem 1.5rem 4rem;
+            text-align: center;
+            background: radial-gradient(circle at top, #1e293b 0%, var(--dark) 100%);
+        }
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin: 0;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+        }
+        .hero p { color: #94a3b8; font-size: 1.2rem; margin-top: 1rem; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+        .image-banner {
+            width: 100%;
+            height: 300px;
+            background: url('https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&q=80&w=1000') center/cover;
+            border-radius: 32px;
+            margin: 2rem 0;
+            position: relative;
+        }
+        .image-banner::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, var(--dark), transparent);
+            border-radius: 32px;
+        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .feature-card { padding: 2rem; text-align: left; }
+        .feature-card h3 { color: var(--primary); margin-top: 0; }
+        .price-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 2rem;
+            text-align: center;
+            border: 2px solid var(--primary);
+        }
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-weight: 600;
+        }
+        .step-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: flex-start;
+        }
+        .step-num {
+            background: var(--primary);
+            color: var(--dark);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+        .highlight { color: var(--accent); font-weight: bold; }
+        .btn-main {
+            display: inline-block;
+            background: var(--primary);
+            color: var(--dark);
+            padding: 1.2rem 2.5rem;
+            border-radius: 99px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-top: 2rem;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+        }
+        .delivery-zones {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        footer { padding: 4rem 1.5rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); }
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2.5rem; }
+        }
     </style>
 </head>
 <body>
-    <div class='nav'>Sip Cycle</div>
-    <div class='hero'>
-        <h1>Pure Water, Guaranteed</h1>
-        <p>Advanced 7-Stage Reverse Osmosis (RO) Purification</p>
-    </div>
-    
+    <header>
+        <div style='font-size: 1.5rem; font-weight: 800;'>SIP CYCLE</div>
+        <div style='color: var(--primary); font-weight: bold;'>TILL: 3291421</div>
+    </header>
+    <section class='hero'>
+        <div class='container'>
+            <h1>STAY HYDRATED.<br>STAY PURE.</h1>
+            <p>Premium 7-Stage Reverse Osmosis Water. Delivered to your door.</p>
+            <div class='image-banner'></div>
+            <a href='https://www.google.com/maps/search/?api=1&query=Papyrus+Apartments+Zimmerman+Nairobi' class='btn-main'>FIND US IN ZIMMERMAN</a>
+            <div class='delivery-zones'>
+                🚚 FREE DELIVERY: <span class='highlight'>Lumumba Dr • Mirema Dr • Roysambu • Zimmerman • Co-op Base</span>
+            </div>
+        </div>
+    </section>
     <div class='container'>
-        <div class='card'>
-            <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;'>
-                <div class='ro-badge'>RO Purified System</div>
-                <div style='font-weight: bold; font-size: 0.9rem;'>Till: 3291421</div>
+        <div class='grid'>
+            <div class='glass feature-card'>
+                <h3>🔬 The RO Difference</h3>
+                <p>Not all water is equal. Our 7-Stage system goes beyond basic filters:</p>
+                <ul style='font-size: 0.9rem; color: #cbd5e1; padding-left: 1.2rem;'>
+                    <li><b>Stage 1-3:</b> Removes dust, sand, and 99% of chlorine/odors.</li>
+                    <li><b>Stage 4 (The RO Core):</b> A high-pressure membrane removes viruses, bacteria, and heavy metals.</li>
+                    <li><b>Stage 5-6:</b> Post-carbon polishing & Mineralization to restore essential minerals.</li>
+                    <li><b>Stage 7:</b> Final UV Sterilization for 100% safety.</li>
+                </ul>
             </div>
-            
-            <div class='badge'>🚚 FREE DELIVERY in Roysambu & Zimmerman</div>
-            
-            <div class='pricing-grid'>
-                <div class='price-item'><span>20L Refill</span><span>KES 150</span></div>
-                <div class='price-item'><span>10L Refill</span><span>KES 90</span></div>
-                <div class='price-item'><span>5L Refill</span><span>KES 40</span></div>
-                <div class='price-item'><span>1L Refill</span><span>KES 10</span></div>
+            <div class='glass feature-card price-card'>
+                <h3 style='color: white;'>VIBE CHECK: PRICING</h3>
+                <div class='price-item'><span>20L Refill</span><span>150/-</span></div>
+                <div class='price-item'><span>10L Refill</span><span>90/-</span></div>
+                <div class='price-item'><span>5L Refill</span><span>40/-</span></div>
+                <div class='price-item'><span>1L Refill</span><span>10/-</span></div>
+                <p style='margin-top: 1.5rem; font-size: 1.2rem; font-weight: 800;'>WHATSAPP: <br> <a href='tel:0719626363' style='color: var(--primary); text-decoration: none;'>0719 62 63 63</a></p>
             </div>
-
-            <div class='offer-card'>
-                <h4>💳 Premium Refill Card Offer</h4>
-                <p style='margin: 0; font-size: 0.95rem;'>Top up your card with <b>KES 1,000</b> and get one <b>FREE 20L Refill</b> instantly! Save more while you drink pure.</p>
-            </div>
-            
-            <a href='https://www.google.com/maps/search/?api=1&query=Papyrus+Apartments+Zimmerman+Nairobi' class='btn'>📍 Directions to Zimmerman Station</a>
         </div>
-
-        <div class='section-title'>Our Institutional Services</div>
-        <div class='service-list'>
-            <p style='margin-top: 0; color: #4b5563;'>We provide bulk purified water supply to reputable establishments, including:</p>
-            <div class='service-item'><span>🏥</span> Hospitals & Clinics</div>
-            <div class='service-item'><span>🏫</span> Private & Public Schools</div>
-            <div class='service-item'><span>🏢</span> Corporate Offices & Businesses</div>
-        </div>
-
-        <div class='section-title'>Order & Inquiries</div>
-        <div class='service-list' style='text-align: center;'>
-            <p style='margin-bottom: 0.5rem;'>Call or WhatsApp for Delivery:</p>
-            <a href='tel:0719626363' style='font-size: 1.75rem; color: var(--teal); text-decoration: none; font-weight: bold;'>0719 62 63 63</a>
-            <p style='font-size: 0.875rem; color: #6b7280; margin-top: 1rem;'>Located at Papyrus Apartments, Behind Co-op Bank, Zimmerman.</p>
+        <div class='glass feature-card' style='margin-top: 2rem;'>
+            <h3 style='text-align: center; font-size: 1.8rem;'>💳 THE REFILL CARD HACK</h3>
+            <div class='step-box'>
+                <div class='step-num'>1</div>
+                <div><b>Grab Your Card:</b> Get your Sip Cycle smart card at our station in Papyrus Apartments.</div>
+            </div>
+            <div class='step-box'>
+                <div class='step-num'>2</div>
+                <div><b>Top Up:</b> Send <span class='highlight'>KES 1,000</span> to Till <span class='highlight'>3291421</span>.</div>
+            </div>
+            <div class='step-box'>
+                <div class='step-num'>3</div>
+                <div><b>Get the Bonus:</b> We credit your card with 1,000/- AND give you <span class='highlight'>1 FREE 20L Refill</span> reward.</div>
+            </div>
+            <div class='step-box'>
+                <div class='step-num'>4</div>
+                <div><b>Tap & Go:</b> Just tap your card next time. No cash needed.</div>
+            </div>
         </div>
     </div>
-
-    <div class='footer'>
-        <p>&copy; 2026 Sip Cycle | Nexcom Ventures</p>
-        <p>Refill. Reuse. Refresh.</p>
-    </div>
+    <footer>
+        <p>REFILL • REUSE • REFRESH</p>
+        <p style='color: #475569; font-size: 0.8rem;'>Papyrus Apartments, Behind Co-op Bank, Zimmerman. <br> Powered by Nexcom Ventures.</p>
+    </footer>
 </body>
 </html>
