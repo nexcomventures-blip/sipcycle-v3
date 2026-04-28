@@ -2,211 +2,153 @@
 <html lang='en'>
 <head>
     <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
-    <title>Sip Cycle | Terminal</title>
-    <script src='https://unpkg.com/html5-qrcode'></script>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Sip Cycle | Staff Terminal (SCANNER)</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         :root {
             --primary: #00f2fe;
-            --secondary: #4facfe;
-            --dark: #070b14;
-            --glass: rgba(255, 255, 255, 0.05);
             --success: #10b981;
-            --warning: #facc15;
+            --error: #ef4444;
+            --dark: #070b14;
         }
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--dark);
-            color: white;
-            margin: 0;
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .header { width: 100%; display: flex; justify-content: space-between; margin-bottom: 2rem; opacity: 0.6; font-size: 0.8rem; letter-spacing: 2px; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--dark); color: white; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .terminal { width: 100%; max-width: 400px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .badge { background: #f59e0b; color: black; font-size: 0.6rem; font-weight: 800; padding: 2px 8px; border-radius: 50px; margin-bottom: 10px; display: inline-block; }
+        h1 { font-size: 1.2rem; text-align: center; letter-spacing: 2px; color: var(--primary); margin-bottom: 20px; margin-top: 5px; }
         
-        .terminal-card {
-            background: rgba(255,255,255,0.03);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 2rem;
-            border-radius: 32px;
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        .mode-toggle {
-            display: flex;
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 2rem;
-        }
-        .mode-btn {
-            flex: 1;
-            padding: 10px;
-            border-radius: 8px;
-            border: none;
-            background: transparent;
-            color: white;
-            font-weight: 800;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
+        .mode-switch { display: flex; gap: 10px; margin-bottom: 20px; }
+        .mode-btn { flex: 1; padding: 10px; border-radius: 12px; border: none; background: rgba(255,255,255,0.1); color: white; font-weight: 600; cursor: pointer; }
         .mode-btn.active { background: var(--primary); color: var(--dark); }
 
-        #reader { width: 100%; border-radius: 16px; overflow: hidden; margin-bottom: 1rem; border: none !important; }
+        .input-group { margin-bottom: 15px; position: relative; }
+        label { display: block; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 5px; opacity: 0.6; }
+        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; font-size: 1rem; box-sizing: border-box; }
         
-        .status-box { margin-top: 1rem; padding: 1.5rem; border-radius: 20px; background: rgba(255,255,255,0.02); }
-        .price-badge { font-size: 2rem; font-weight: 800; color: var(--primary); margin: 0.5rem 0; }
+        .scan-trigger { position: absolute; right: 5px; top: 25px; background: var(--primary); color: var(--dark); border: none; padding: 8px 12px; border-radius: 8px; font-weight: 800; font-size: 0.7rem; cursor: pointer; }
         
-        .input-group { text-align: left; margin-bottom: 1rem; }
-        .input-group label { font-size: 0.7rem; opacity: 0.5; text-transform: uppercase; margin-bottom: 5px; display: block; }
-        .input-group input { 
-            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 8px; padding: 12px; color: white; font-family: inherit;
-        }
+        #reader { width: 100%; border-radius: 15px; overflow: hidden; margin-bottom: 15px; display: none; border: 2px solid var(--primary); }
 
-        .btn-action {
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            border: none; color: var(--dark); padding: 1.2rem; border-radius: 16px;
-            font-weight: 800; width: 100%; margin-top: 1rem; cursor: pointer;
-        }
-
-        #overlay {
-            position: fixed; inset: 0; display: none;
-            flex-direction: column; align-items: center; justify-content: center; z-index: 1000;
-            text-align: center; color: var(--dark);
-        }
-        .overlay-content { padding: 3rem; border-radius: 40px; }
-        .balance-label { font-size: 0.9rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
-        .balance-value { font-size: 3.5rem; font-weight: 800; }
+        .btn-action { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--primary); color: var(--dark); font-weight: 800; font-size: 1rem; cursor: pointer; margin-top: 10px; }
+        
+        #status { margin-top: 20px; padding: 20px; border-radius: 15px; text-align: center; display: none; }
+        .status-success { background: rgba(16, 185, 129, 0.2); border: 1px solid var(--success); color: var(--success); }
+        .status-error { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--error); color: var(--error); }
+        
+        .balance-large { font-size: 3rem; font-weight: 800; margin: 10px 0; }
+        .info-text { font-size: 0.7rem; opacity: 0.5; margin-top: 20px; text-align: center; line-height: 1.4; }
     </style>
 </head>
 <body>
-    <!-- SUCCESS / ERROR OVERLAY -->
-    <div id='overlay'>
-        <div class='overlay-content'>
-            <div id='overlay-icon' style='font-size: 5rem;'>✅</div>
-            <div id='overlay-msg' style='font-size: 1.5rem; font-weight: 800;'>PAYMENT SUCCESS</div>
-            <div id='balance-container' style='margin-top: 20px;'>
-                <div class='balance-label'>New Balance</div>
-                <div id='overlay-balance' class='balance-value'>0/-</div>
+    <div class='terminal'>
+        <center><div class='badge'>SIMULATOR MODE ACTIVE</div></center>
+        <h1>STAFF TERMINAL</h1>
+        
+        <div class='mode-switch'>
+            <button class='mode-btn active' id='pay-btn' onclick='setMode("pay")'>PAYMENT</button>
+            <button class='mode-btn' id='reg-btn' onclick='setMode("reg")'>REGISTER</button>
+        </div>
+
+        <div id="reader"></div>
+
+        <div class='input-group'>
+            <label>Card ID</label>
+            <input type='text' id='cardId' placeholder='Scan or enter code...'>
+            <button class="scan-trigger" onclick="startScanner()">SCAN QR</button>
+        </div>
+
+        <div id='payForm'>
+            <div class='input-group'>
+                <label>Refill Size</label>
+                <input type='text' value='20 Litres (150/-)' readonly>
             </div>
-            <div id='notif-status' style='margin-top: 20px; font-weight: 600; opacity: 0.7;'>Notification Sent 📱</div>
-        </div>
-    </div>
-
-    <div class='header'>
-        <span>SIP CYCLE</span>
-        <span>v3.0 SMART</span>
-    </div>
-
-    <div class='terminal-card'>
-        <div class='mode-toggle'>
-            <button id='btnPay' class='mode-btn active'>PAYMENT</button>
-            <button id='btnReg' class='mode-btn'>REGISTER</button>
+            <button class='btn-action' onclick='processPayment()'>PROCESS PAYMENT</button>
         </div>
 
-        <div id='reader'></div>
-
-        <div id='ui-pay'>
-            <div class='status-box'>
-                <div style='opacity: 0.6; font-size: 0.8rem;'>20L AUTO-DEDUCT</div>
-                <div class='price-badge'>150/-</div>
-            </div>
-            <button id='startScan' class='btn-action'>SCAN CARD / TAP</button>
+        <div id='regForm' style='display:none;'>
+            <div class='input-group'><label>Customer Name</label><input type='text' id='name'></div>
+            <div class='input-group'><label>Phone Number</label><input type='tel' id='phone' placeholder='254...'></div>
+            <div class='input-group'><label>Initial Deposit (KES)</label><input type='number' id='deposit' value='1000'></div>
+            <button class='btn-action' onclick='processRegistration()'>REGISTER CARD</button>
         </div>
 
-        <div id='ui-reg' style='display:none;'>
-            <div class='input-group'><label>Name</label><input type='text' id='regName'></div>
-            <div class='input-group'><label>Phone (for SMS)</label><input type='tel' id='regPhone' placeholder='2547...'></div>
-            <div class='input-group'><label>Initial Deposit</label><input type='number' id='regDeposit' value='1000'></div>
-            <div class='input-group'><label>Card ID</label><input type='text' id='regCardId' readonly></div>
-            <button id='saveBtn' class='btn-action'>LINK & NOTIFY</button>
-        </div>
+        <div id='status'></div>
+        
+        <p class='info-text'>
+            Scan the QR sticker on the card to link details.<br>
+            Simulator saves data locally for now.
+        </p>
     </div>
 
     <script>
-        // CONFIG: Replace with your actual Google Apps Script Web App URL
-        const BACKEND_URL = 'https://script.google.com/macros/s/REPLACE_WITH_YOUR_ID/exec';
+        const DB_KEY = "sipcycle_sim_db";
+        let html5QrCode;
 
-        let currentMode = 'pay';
-        const html5QrCode = new Html5Qrcode('reader');
+        function getDB() { return JSON.parse(localStorage.getItem(DB_KEY) || "{}"); }
+        function saveDB(db) { localStorage.setItem(DB_KEY, JSON.stringify(db)); }
 
-        document.getElementById('btnPay').onclick = () => { currentMode = 'pay'; switchUI('pay'); };
-        document.getElementById('btnReg').onclick = () => { currentMode = 'reg'; switchUI('reg'); };
-
-        function switchUI(m) {
-            document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.id.toLowerCase().includes(m)));
-            document.getElementById('ui-pay').style.display = m === 'pay' ? 'block' : 'none';
-            document.getElementById('ui-reg').style.display = m === 'reg' ? 'block' : 'none';
+        function setMode(mode) {
+            document.getElementById("pay-btn").classList.toggle("active", mode === "pay");
+            document.getElementById("reg-btn").classList.toggle("active", mode === "reg");
+            document.getElementById("payForm").style.display = mode === "pay" ? "block" : "none";
+            document.getElementById("regForm").style.display = mode === "reg" ? "block" : "none";
+            document.getElementById("status").style.display = "none";
         }
 
-        async function startCamera() {
-            try {
-                await html5QrCode.start({ facingMode: 'environment' }, { fps: 10, qrbox: 250 }, (txt) => {
-                    processId(txt);
-                    html5QrCode.stop();
+        function startScanner() {
+            const reader = document.getElementById("reader");
+            reader.style.display = "block";
+            html5QrCode = new Html5Qrcode("reader");
+            html5QrCode.start(
+                { facingMode: "environment" }, 
+                { fps: 10, qrbox: { width: 250, height: 250 } },
+                (decodedText) => {
+                    document.getElementById("cardId").value = decodedText;
+                    stopScanner();
+                },
+                (errorMessage) => {}
+            ).catch(err => alert("Camera error: " + err));
+        }
+
+        function stopScanner() {
+            if (html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    document.getElementById("reader").style.display = "none";
                 });
-            } catch (err) { alert('Camera access denied'); }
-        }
-
-        document.getElementById('startScan').onclick = startCamera;
-
-        if ('NDEFReader' in window) {
-            const ndef = new NDEFReader();
-            ndef.scan().then(() => { ndef.onreading = e => processId(e.serialNumber); });
-        }
-
-        async function processId(id) {
-            if (currentMode === 'reg') {
-                document.getElementById('regCardId').value = id;
-                return;
-            }
-
-            // Payment Processing
-            showOverlay('🔄', 'PROCESSING...', '#facc15');
-            
-            try {
-                // In a real setup, we would fetch(BACKEND_URL, ...)
-                // Mocking the response for Dickson to see the UI
-                setTimeout(() => {
-                    const mockBalance = 850; // Current - 150
-                    showOverlay('✅', 'PAYMENT DONE', '#10b981', mockBalance);
-                    setTimeout(hideOverlay, 3000);
-                }, 1500);
-            } catch (err) {
-                showOverlay('❌', 'SYSTEM ERROR', '#ef4444');
-                setTimeout(hideOverlay, 3000);
             }
         }
 
-        function showOverlay(icon, msg, color, balance = null) {
-            const o = document.getElementById('overlay');
-            o.style.display = 'flex';
-            o.style.backgroundColor = color;
-            document.getElementById('overlay-icon').textContent = icon;
-            document.getElementById('overlay-msg').textContent = msg;
-            
-            const bCont = document.getElementById('balance-container');
-            if (balance !== null) {
-                bCont.style.display = 'block';
-                document.getElementById('overlay-balance').textContent = balance + '/-';
-            } else {
-                bCont.style.display = 'none';
-            }
+        function processPayment() {
+            const cardId = document.getElementById("cardId").value.trim();
+            const db = getDB();
+            const client = db[cardId];
+            if(!client) return showStatus("NOT FOUND", "status-error", "Register this card first.");
+            if(client.balance < 150) return showStatus("LOW BALANCE", "status-error", client.balance + "/-");
+            client.balance -= 150;
+            db[cardId] = client;
+            saveDB(db);
+            showStatus("PAYMENT SUCCESS", "status-success", "<div class='balance-large'>" + client.balance + "/-</div><div>Client: " + client.name + "</div>");
         }
 
-        function hideOverlay() { document.getElementById('overlay').style.display = 'none'; }
+        function processRegistration() {
+            const cardId = document.getElementById("cardId").value.trim();
+            const name = document.getElementById("name").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+            const deposit = parseFloat(document.getElementById("deposit").value);
+            if(!cardId || !name) return alert("Fill Card ID and Name!");
+            const db = getDB();
+            db[cardId] = { name, phone, balance: deposit };
+            saveDB(db);
+            showStatus("REGISTERED", "status-success", "Linked " + cardId + " to " + name);
+        }
 
-        document.getElementById('saveBtn').onclick = () => {
-            alert('LINKED: Client registered and Welcome SMS sent!');
-        };
+        function showStatus(title, className, htmlContent = "") {
+            const s = document.getElementById("status");
+            s.style.display = "block";
+            s.className = className;
+            s.innerHTML = "<strong>" + title + "</strong><br>" + htmlContent;
+        }
     </script>
 </body>
 </html>
