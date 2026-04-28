@@ -123,12 +123,12 @@
                 const res = await response.json();
                 
                 if(res.status === "paid") {
-                    showStatus("PAYMENT SUCCESS", "status-success", " + "`" + " <div style='font-size: 0.8rem; opacity: 0.8;'>NEW BALANCE</div> <div class='balance-large'>\${res.balance}/-</div> <div style='font-size: 0.7rem;'>SMS Sent to \${res.name}</div> " + "`" + ");
+                    showStatus("PAYMENT SUCCESS", "status-success", "NEW BALANCE: " + res.balance + "/-");
                 } else {
                     showStatus("CARD NOT FOUND", "status-error", "Please register this card first.");
                 }
             } catch (e) {
-                showStatus("OFFLINE MODE", "status-error", "Check your App Script deployment URL.");
+                showStatus("OFFLINE MODE", "status-error", "Check connection.");
             }
         }
 
@@ -150,9 +150,9 @@
                     method: "POST",
                     body: JSON.stringify(data)
                 });
-                showStatus("REGISTRATION COMPLETE", "status-success", "Card is now linked and active.");
+                showStatus("REGISTRATION COMPLETE", "status-success", "Card linked.");
             } catch (e) {
-                showStatus("ERROR", "status-error", "Registration failed. Check URL.");
+                showStatus("ERROR", "status-error", "Failed.");
             }
         }
 
